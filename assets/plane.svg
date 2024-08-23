@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes</title>
+    <style>
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .booking-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        input[type="date"]::placeholder {
+            color: #999;
+        }
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .radio-group input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-right: 8px;
+            position: relative;
+        }
+        .radio-group input[type="radio"]:checked {
+            border-color: #007BFF;
+            background-color: #007BFF;
+        }
+        .radio-group input[type="radio"]:checked::before {
+            content: "✔";
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            left: 3px;
+            top: 1px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: not-allowed;
+            opacity: 0.5;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .submit-btn.enabled {
+            cursor: pointer;
+            opacity: 1;
+        }
+        .submit-btn.loading {
+            background-color: black;
+            color: transparent;
+        }
+        .plane-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            transition: transform 1s ease;
+        }
+        @keyframes shake {
+            0%, 100% {
+                transform: translate(-50%, -50%) rotate(-10deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(10deg);
+            }
+        }
+        @keyframes takeoff {
+            to {
+                transform: translate(-50%, -200%) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>Planes</h1>
+        <form id="flight-form">
+            <div class="input-group">
+                <input type="text" id="origin" name="origin" placeholder="Enter your origin">
+            </div>
+            <div class="input-group">
+                <input type="text" id="destination" name="destination" placeholder="Enter your destination">
+            </div>
+            <div class="input-group">
+                <input type="number" id="passengers" name="passengers" min="1" max="10" placeholder="Passengers">
+            </div>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" id="oneway" name="trip-type" value="oneway" checked>
+                    One-way
+                </label>
+                <label>
+                    <input type="radio" id="return" name="trip-type" value="return">
+                    Return
+                </label>
+            </div>
+            <div class="input-group">
+                <input type="date" id="departure-date" name="departure-date" placeholder="Departure Date">
+            </div>
+            <div class="input-group" id="return-date-group" style="display: none;">
+                <input type="date" id="return-date" name="return-date" placeholder="Return Date">
+            </div>
+            <button type="button" class="submit-btn" disabled>
+                <img src="assets/plane.svg" class="plane-icon" alt="Plane Icon">
+                Search Flights
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const originInput = document.getElementById('origin');
+        const destinationInput = document.getElementById('destination');
+        const passengersInput = document.getElementById('passengers');
+        const departureDateInput = document.getElementById('departure-date');
+        const returnDateInput = document.getElementById('return-date');
+        const returnRadio = document.getElementById('return');
+        const oneWayRadio = document.getElementById('oneway');
+        const returnDateGroup = document.getElementById('return-date-group');
+        const submitBtn = document.querySelector('.submit-btn');
+        const planeIcon = document.querySelector('.plane-icon');
+
+        function checkFormValidity() {
+            const isOriginFilled = originInput.value.trim() !== '';
+            const isDestinationFilled = destinationInput.value.trim() !== '';
+            const isPassengersFilled = passengersInput.value.trim() !== '';
+            const isDepartureDateFilled = departureDateInput.value.trim() !== '';
+            const isReturnDateFilled = returnRadio.checked ? returnDateInput.value.trim() !== '' : true;
+
+            if (isOriginFilled && isDestinationFilled && isPassengersFilled && isDepartureDateFilled && isReturnDateFilled) {
+                submitBtn.disabled = false;
+                submitBtn.classList.add('enabled');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('enabled');
+            }
+        }
+
+        originInput.addEventListener('input', checkFormValidity);
+        destinationInput.addEventListener('input', checkFormValidity);
+        passengersInput.addEventListener('input', checkFormValidity);
+        departureDateInput.addEventListener('input', checkFormValidity);
+        returnDateInput.addEventListener('input', checkFormValidity);
+
+        returnRadio.addEventListener('change', function () {
+            returnDateGroup.style.display = 'block';
+            checkFormValidity();
+        });
+
+        oneWayRadio.addEventListener('change', function () {
+            returnDateGroup.style.display = 'none';
+            checkFormValidity();
+        });
+
+        submitBtn.addEventListener('click', function() {
+            if (!submitBtn.classList.contains('enabled')) return;
+
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            planeIcon.style.animation = 'shake 0.2s infinite';
+
+            setTimeout(() => {
+                planeIcon.style.animation = 'none';
+                planeIcon.style.transform = 'translate(-50%, -200%) scale(0.5)';
+            }, 1000);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
