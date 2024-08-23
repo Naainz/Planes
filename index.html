@@ -109,7 +109,6 @@
             height: 20px;
             transform: translate(-50%, -50%);
             transition: transform 1s ease;
-            animation: takeoff 1s forwards;
         }
         @keyframes shake {
             0%, 100% {
@@ -220,12 +219,29 @@
 
                 const origin = originInput.value.trim();
                 const destination = destinationInput.value.trim();
-                const departureDate = new Date(departureDateInput.value).toDateString();
-                const returnDate = returnRadio.checked ? new Date(returnDateInput.value).toDateString() : null;
+                const departureDate = new Date(departureDateInput.value).toISOString().split('T')[0]; 
+                const returnDate = returnRadio.checked ? new Date(returnDateInput.value).toISOString().split('T')[0] : null;
 
-                const url = `flight-details.html?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&departure=${encodeURIComponent(departureDate)}&return=${encodeURIComponent(returnDate)}`;
-                window.location.href = url;
+                const apiKey = 'change-ths';
+                const apiUrl = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${departureDate}&adults=${passengersInput.value}&returnDate=${returnDate}&max=5`;
 
+                try {
+                    const response = await fetch(apiUrl, {
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`
+                        }
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        const url = `flight-details.html?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&departure=${encodeURIComponent(departureDate)}&return=${encodeURIComponent(returnDate)}&data=${encodeURIComponent(JSON.stringify(data))}`;
+                        window.location.href = url;
+                    } else {
+                        console.error('Error fetching flight details:', data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching flight details:', error);
+                }
             }, 1000);
         });
     </script>

@@ -48,25 +48,11 @@
 </head>
 <body>
     <div class="flight-details-container">
-        <h1>Loading flight details...</h1>
+        <h1>Flight Details</h1>
         <div id="flights"></div>
     </div>
 
     <script>
-        async function fetchFlightDetails(origin, destination, departure, returnDate) {
-            const apiKey = 'key-here';
-            const apiUrl = `http://api.aviationstack.com/v1/flights?access_key=${apiKey}&dep_iata=${origin}&arr_iata=${destination}&flight_date=${departure}`;
-
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                return data.data;
-            } catch (error) {
-                console.error('Error fetching flight details:', error);
-                return [];
-            }
-        }
-
         function getQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             return {
@@ -74,6 +60,7 @@
                 destination: urlParams.get('destination'),
                 departure: urlParams.get('departure'),
                 returnDate: urlParams.get('return'),
+                data: JSON.parse(decodeURIComponent(urlParams.get('data'))),
             };
         }
 
@@ -90,18 +77,17 @@
                 const flightCard = document.createElement('div');
                 flightCard.classList.add('flight-card');
                 flightCard.innerHTML = `
-                    <h2>${flight.airline.name} | Flight ${flight.flight.iata}</h2>
-                    <p>A flight from ${origin} to ${destination} on ${departure} costs $${flight.price}</p>
-                    <a href="${flight.booking_link}" target="_blank">Book this flight</a>
+                    <h2>${flight.itineraries[0].segments[0].carrierCode} | Flight ${flight.id}</h2>
+                    <p>A flight from ${origin} to ${destination} on ${departure} costs $${flight.price.total}</p>
+                    <a href="https://www.your-booking-url.com?flight=${flight.id}" target="_blank">Book this flight</a>
                 `;
                 flightsContainer.appendChild(flightCard);
             });
         }
 
         async function init() {
-            const { origin, destination, departure, returnDate } = getQueryParams();
-            const flights = await fetchFlightDetails(origin, destination, departure, returnDate);
-            displayFlightDetails(flights, origin, destination, departure, returnDate);
+            const { origin, destination, departure, returnDate, data } = getQueryParams();
+            displayFlightDetails(data, origin, destination, departure, returnDate);
         }
 
         init();
