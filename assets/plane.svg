@@ -1,227 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planes</title>
-    <style>
-        body {
-            font-family: 'Satoshi', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .booking-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        input[type="text"]::placeholder,
-        input[type="number"]::placeholder,
-        input[type="date"]::placeholder {
-            color: #999;
-        }
-        .radio-group {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        .radio-group input[type="radio"] {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            margin-right: 8px;
-            position: relative;
-        }
-        .radio-group input[type="radio"]:checked {
-            border-color: #007BFF;
-            background-color: #007BFF;
-        }
-        .radio-group input[type="radio"]:checked::before {
-            content: "✔";
-            color: white;
-            font-size: 12px;
-            position: absolute;
-            left: 3px;
-            top: 1px;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: not-allowed;
-            opacity: 0.5;
-            position: relative;
-            overflow: hidden;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .submit-btn.enabled {
-            cursor: pointer;
-            opacity: 1;
-        }
-        .submit-btn.loading {
-            background-color: black;
-            color: transparent;
-        }
-        .plane-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            transform: translate(-50%, -50%);
-            transition: transform 1s ease;
-        }
-        @keyframes shake {
-            0%, 100% {
-                transform: translate(-50%, -50%) rotate(-10deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) rotate(10deg);
-            }
-        }
-        @keyframes takeoff {
-            to {
-                transform: translate(-50%, -200%) scale(0.5);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="booking-container">
-        <h1>Planes</h1>
-        <form id="flight-form">
-            <div class="input-group">
-                <input type="text" id="origin" name="origin" placeholder="Enter your origin">
-            </div>
-            <div class="input-group">
-                <input type="text" id="destination" name="destination" placeholder="Enter your destination">
-            </div>
-            <div class="input-group">
-                <input type="number" id="passengers" name="passengers" min="1" max="10" placeholder="Passengers">
-            </div>
-            <div class="radio-group">
-                <label>
-                    <input type="radio" id="oneway" name="trip-type" value="oneway" checked>
-                    One-way
-                </label>
-                <label>
-                    <input type="radio" id="return" name="trip-type" value="return">
-                    Return
-                </label>
-            </div>
-            <div class="input-group">
-                <input type="date" id="departure-date" name="departure-date" placeholder="Departure Date">
-            </div>
-            <div class="input-group" id="return-date-group" style="display: none;">
-                <input type="date" id="return-date" name="return-date" placeholder="Return Date">
-            </div>
-            <button type="button" class="submit-btn" disabled>
-                <img src="assets/plane.svg" class="plane-icon" alt="Plane Icon">
-                Search Flights
-            </button>
-        </form>
-    </div>
-
-    <script>
-        const originInput = document.getElementById('origin');
-        const destinationInput = document.getElementById('destination');
-        const passengersInput = document.getElementById('passengers');
-        const departureDateInput = document.getElementById('departure-date');
-        const returnDateInput = document.getElementById('return-date');
-        const returnRadio = document.getElementById('return');
-        const oneWayRadio = document.getElementById('oneway');
-        const returnDateGroup = document.getElementById('return-date-group');
-        const submitBtn = document.querySelector('.submit-btn');
-        const planeIcon = document.querySelector('.plane-icon');
-
-        function checkFormValidity() {
-            const isOriginFilled = originInput.value.trim() !== '';
-            const isDestinationFilled = destinationInput.value.trim() !== '';
-            const isPassengersFilled = passengersInput.value.trim() !== '';
-            const isDepartureDateFilled = departureDateInput.value.trim() !== '';
-            const isReturnDateFilled = returnRadio.checked ? returnDateInput.value.trim() !== '' : true;
-
-            if (isOriginFilled && isDestinationFilled && isPassengersFilled && isDepartureDateFilled && isReturnDateFilled) {
-                submitBtn.disabled = false;
-                submitBtn.classList.add('enabled');
-            } else {
-                submitBtn.disabled = true;
-                submitBtn.classList.remove('enabled');
-            }
-        }
-
-        originInput.addEventListener('input', checkFormValidity);
-        destinationInput.addEventListener('input', checkFormValidity);
-        passengersInput.addEventListener('input', checkFormValidity);
-        departureDateInput.addEventListener('input', checkFormValidity);
-        returnDateInput.addEventListener('input', checkFormValidity);
-
-        returnRadio.addEventListener('change', function () {
-            returnDateGroup.style.display = 'block';
-            checkFormValidity();
-        });
-
-        oneWayRadio.addEventListener('change', function () {
-            returnDateGroup.style.display = 'none';
-            checkFormValidity();
-        });
-
-        submitBtn.addEventListener('click', function() {
-            if (!submitBtn.classList.contains('enabled')) return;
-
-            submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-
-            planeIcon.style.animation = 'shake 0.2s infinite';
-
-            setTimeout(() => {
-                planeIcon.style.animation = 'none';
-                planeIcon.style.transform = 'translate(-50%, -200%) scale(0.5)';
-            }, 1000);
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 5000);
-        });
-    </script>
-</body>
-</html>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 width="800px" height="800px" viewBox="0 0 478.136 478.136"
+	 xml:space="preserve">
+<g>
+	<g>
+		<path d="M475.146,244.099l-109.904-63.127v-12.433h7.851v-23.552h4.905c0-7.851-7.466-16.683-16.683-16.683
+			c-9.214,0-16.684,8.832-16.684,16.683h4.909v23.552h7.851v7.927l-47.103-27.052v-12.277h7.85v-23.552h4.905
+			c0-7.851-7.466-16.683-16.683-16.683c-9.213,0-16.679,8.832-16.679,16.683h4.905v23.552h7.85v7.767l-25.274-14.517
+			C277.163,18.031,239.636,0,239.636,0s-37.532,18.031-37.532,130.385l-25.273,14.517v-7.767h7.851v-23.552h4.907
+			c0-7.851-7.468-16.683-16.683-16.683c-9.215,0-16.681,8.832-16.681,16.683h4.907v23.552h7.848v12.277l-47.101,27.052v-7.927h7.851
+			v-23.552h4.905c0-7.851-7.466-16.683-16.681-16.683s-16.683,8.832-16.683,16.683h4.907v23.552h7.851v12.433L4.123,244.099v10.791
+			c0,0-2.276,12.76-2.276,21.589l10.614-3.924l9.325,3.924l1.963-9.811l51.027-12.407v21.965c0,1.227,0.99,2.216,2.204,2.216h3.442
+			c1.216,0,2.204-0.989,2.204-2.208v-23.872l39.252-9.538v17.709c0,1.219,0.99,2.208,2.204,2.208h3.442
+			c1.214,0,2.204-0.989,2.204-2.208v-19.616l39.25-9.538v13.461c0,1.21,0.99,2.2,2.204,2.2h3.442c1.216,0,2.204-0.99,2.204-2.209
+			v-15.37l22.57-5.484c0,0,1.224,16.438,9.327,24.538c0,0,0.981,33.361,0.981,76.049c0,42.687,16.681,85.863,16.681,85.863
+			L152.3,456.548l-0.487,21.588l83.284-20.606c0,0-3.312,14.227,4.539,18.643c7.849-4.408,3.4-18.643,3.4-18.643l82.148,20.606
+			l-0.485-21.588l-74.077-46.121c0,0,16.679-43.177,16.679-85.863c0-42.688,0.998-76.049,0.998-76.049
+			c8.095-8.1,9.369-24.538,9.369-24.538l24.77,6.021v14.833c0,1.219,0.99,2.209,2.2,2.209h3.451c1.21,0,2.2-0.99,2.2-2.209v-12.924
+			l39.252,9.538v19.087c0,1.219,0.986,2.208,2.2,2.208h3.45c1.211,0,2.2-0.989,2.2-2.208v-17.18l39.249,9.538v23.351
+			c0,1.211,0.99,2.2,2.2,2.2h3.45c1.215,0,2.2-0.989,2.2-2.208v-21.451l48.891,11.886l2.107,9.811l9.606-3.924l11.192,3.924
+			c0-8.829-1.142-21.589-1.142-21.589V244.099z"/>
+	</g>
+</g>
+</svg>

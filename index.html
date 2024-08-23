@@ -108,8 +108,8 @@
             width: 20px;
             height: 20px;
             transform: translate(-50%, -50%);
-            animation: shake 0.2s infinite;
             transition: transform 1s ease;
+            animation: takeoff 1s forwards;
         }
         @keyframes shake {
             0%, 100% {
@@ -155,7 +155,10 @@
             <div class="input-group" id="return-date-group" style="display: none;">
                 <input type="date" id="return-date" name="return-date" placeholder="Return Date">
             </div>
-            <button type="button" class="submit-btn" disabled>Search Flights</button>
+            <button type="button" class="submit-btn" disabled>
+                <img src="assets/plane.svg" class="plane-icon" alt="Plane Icon">
+                Search Flights
+            </button>
         </form>
     </div>
 
@@ -169,6 +172,7 @@
         const oneWayRadio = document.getElementById('oneway');
         const returnDateGroup = document.getElementById('return-date-group');
         const submitBtn = document.querySelector('.submit-btn');
+        const planeIcon = document.querySelector('.plane-icon');
 
         function checkFormValidity() {
             const isOriginFilled = originInput.value.trim() !== '';
@@ -202,29 +206,27 @@
             checkFormValidity();
         });
 
-        submitBtn.addEventListener('click', function() {
+        submitBtn.addEventListener('click', async function() {
             if (!submitBtn.classList.contains('enabled')) return;
 
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
 
-            const planeIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            planeIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            planeIcon.setAttribute("viewBox", "0 0 24 24");
-            planeIcon.setAttribute("fill", "white");
-            planeIcon.setAttribute("class", "plane-icon");
-            planeIcon.innerHTML = `<path d="M2.5,19.75l6.5-4.5v4.5l2,1.5V13l-2.5-1L2,9l0.5-2.5l6,2.5L16,3h1l4,1l-9.5,9.5l6,2.5L13.5,22L10,18l-4.5,2.5 L2.5,19.75z"/>`;
-            submitBtn.appendChild(planeIcon);
+            planeIcon.style.animation = 'shake 0.2s infinite';
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 planeIcon.style.animation = 'none';
                 planeIcon.style.transform = 'translate(-50%, -200%) scale(0.5)';
-                planeIcon.style.transition = 'transform 1s ease';
-            }, 1000);
 
-            setTimeout(() => {
-                window.location.reload();
-            }, 5000);
+                const origin = originInput.value.trim();
+                const destination = destinationInput.value.trim();
+                const departureDate = new Date(departureDateInput.value).toDateString();
+                const returnDate = returnRadio.checked ? new Date(returnDateInput.value).toDateString() : null;
+
+                const url = `flight-details.html?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&departure=${encodeURIComponent(departureDate)}&return=${encodeURIComponent(returnDate)}`;
+                window.location.href = url;
+
+            }, 1000);
         });
     </script>
 </body>
