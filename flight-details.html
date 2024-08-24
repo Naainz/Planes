@@ -25,30 +25,30 @@
             margin-bottom: 20px;
         }
         .flight-card {
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            border: 1px solid #ddd
+
+;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
         .flight-card h2 {
-            margin: 0;
-            font-size: 20px;
-            color: #007BFF;
+            margin: 0 0 10px 0;
+            font-size: 18px;
         }
         .flight-card p {
-            margin: 5px 0;
+            margin: 0 0 10px 0;
             font-size: 16px;
         }
         .flight-card a {
-            text-decoration: none;
             color: #007BFF;
+            text-decoration: none;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="flight-details-container">
-        <h1>Flight Details</h1>
         <div id="flights"></div>
     </div>
 
@@ -59,8 +59,7 @@
                 origin: urlParams.get('origin'),
                 destination: urlParams.get('destination'),
                 departure: urlParams.get('departure'),
-                returnDate: urlParams.get('return'),
-                data: JSON.parse(decodeURIComponent(urlParams.get('data'))),
+                returnDate: urlParams.get('return')
             };
         }
 
@@ -86,8 +85,15 @@
         }
 
         async function init() {
-            const { origin, destination, departure, returnDate, data } = getQueryParams();
-            displayFlightDetails(data, origin, destination, departure, returnDate);
+            const { origin, destination, departure, returnDate } = getQueryParams();
+            const data = JSON.parse(localStorage.getItem('flightData'));
+
+            if (data) {
+                displayFlightDetails(data.data, origin, destination, departure, returnDate);
+            } else {
+                console.error('No flight data found in local storage.');
+                alert('No flight data found. Please try searching again.');
+            }
         }
 
         init();
