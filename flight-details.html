@@ -4,99 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Details</title>
-    <style>
-        body {
-            font-family: 'Satoshi', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        .flight-details-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .flight-card {
-            border: 1px solid #ddd
-
-;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .flight-card h2 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-        }
-        .flight-card p {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-        }
-        .flight-card a {
-            color: #007BFF;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <div class="flight-details-container">
-        <div id="flights"></div>
+
     </div>
 
-    <script>
-        function getQueryParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return {
-                origin: urlParams.get('origin'),
-                destination: urlParams.get('destination'),
-                departure: urlParams.get('departure'),
-                returnDate: urlParams.get('return')
-            };
-        }
-
-        function displayFlightDetails(flights, origin, destination, departure, returnDate) {
-            const flightsContainer = document.getElementById('flights');
-            flightsContainer.innerHTML = `<h1>Flights from ${origin} to ${destination} on ${departure}${returnDate ? ' (Return: ' + returnDate + ')' : ''}</h1>`;
-            
-            if (flights.length === 0) {
-                flightsContainer.innerHTML += `<p>No flights found for the selected route and date.</p>`;
-                return;
-            }
-
-            flights.forEach(flight => {
-                const flightCard = document.createElement('div');
-                flightCard.classList.add('flight-card');
-                flightCard.innerHTML = `
-                    <h2>${flight.itineraries[0].segments[0].carrierCode} | Flight ${flight.id}</h2>
-                    <p>A flight from ${origin} to ${destination} on ${departure} costs $${flight.price.total}</p>
-                    <a href="https://www.your-booking-url.com?flight=${flight.id}" target="_blank">Book this flight</a>
-                `;
-                flightsContainer.appendChild(flightCard);
-            });
-        }
-
-        async function init() {
-            const { origin, destination, departure, returnDate } = getQueryParams();
-            const data = JSON.parse(localStorage.getItem('flightData'));
-
-            if (data) {
-                displayFlightDetails(data.data, origin, destination, departure, returnDate);
-            } else {
-                console.error('No flight data found in local storage.');
-                alert('No flight data found. Please try searching again.');
-            }
-        }
-
-        init();
-    </script>
+    <script src="assets/scripts/flydetails.js"></script>
 </body>
 </html>
