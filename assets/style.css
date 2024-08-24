@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
+
 body {
-    font-family: 'Satoshi', sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Slackey', sans-serif;
+    background-color: #FAEFD6;
     margin: 0;
     padding: 0;
     display: flex;
@@ -8,6 +10,29 @@ body {
     align-items: center;
     height: 100vh;
     overflow: hidden;
+}
+
+.stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 40px); 
+    grid-template-rows: repeat(auto-fill, 40px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.star {
+    width: 20px;
+    height: 20px;
+    background-image: url('https://icons.hackclub.com/api/icons/0xD8A52D/glyph:rep.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .booking-container {
@@ -58,6 +83,7 @@ input[type="text"]::placeholder,
 input[type="number"]::placeholder,
 input[type="date"]::placeholder {
     color: #999;
+    font-family: 'Slackey', sans-serif;
 }
 
 .radio-group {
